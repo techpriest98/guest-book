@@ -1,5 +1,8 @@
 package pb.guestbook.feedback;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pb.guestbook.dtos.AddFeedbackRequestDto;
 import pb.guestbook.dtos.AddFeedbackResponseDto;
@@ -10,14 +13,15 @@ import static pb.guestbook.feedback.converter.FeedbackConverter.toAddFeedbackReq
 import static pb.guestbook.feedback.converter.FeedbackConverter.toAddFeedbackResponseDto;
 
 @RestController
-public class FeedbackController implements AddFeedBackAPI {
+@RequestMapping("/api")
+public class FeedbackController {
     private final AddFeedbackUseCase addFeedbackUseCase;
     public FeedbackController(AddFeedbackUseCase addFeedbackUseCase) {
         this.addFeedbackUseCase = addFeedbackUseCase;
     }
 
-    @Override
-    public AddFeedbackResponseDto addFeedback(AddFeedbackRequestDto addFeedbackRequestDto) {
+    @PostMapping("/feedback/add")
+    public AddFeedbackResponseDto addFeedback(@RequestBody AddFeedbackRequestDto addFeedbackRequestDto) {
         AddFeedbackResponse result = addFeedbackUseCase.addFeedback(toAddFeedbackRequest(addFeedbackRequestDto));
 
         return toAddFeedbackResponseDto(result);

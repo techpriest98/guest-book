@@ -5,6 +5,9 @@ import pb.guestbook.dtos.AddFeedbackResponseDto;
 import pb.guestbook.model.feedback.AddFeedbackRequest;
 import pb.guestbook.model.feedback.AddFeedbackResponse;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static java.util.Objects.isNull;
 
 public class FeedbackConverter {
@@ -14,10 +17,12 @@ public class FeedbackConverter {
             return addFeedBackRequestBuilder.build();
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         addFeedBackRequestBuilder
             .setAuthorName(addFeedbackRequestDto.getAuthorName())
             .setFeedback(addFeedbackRequestDto.getFeedback())
-            .setFeedbackDate(addFeedbackRequestDto.getFeedbackDate())
+            .setFeedbackDate(LocalDateTime.parse(addFeedbackRequestDto.getFeedbackDate()))
             .setRating(addFeedbackRequestDto.getRating());
 
         return addFeedBackRequestBuilder.build();

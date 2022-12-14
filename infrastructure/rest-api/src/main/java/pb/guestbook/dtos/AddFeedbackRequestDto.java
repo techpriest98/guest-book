@@ -10,7 +10,7 @@ public class AddFeedbackRequestDto {
     @JsonProperty
     private String feedback;
     @JsonProperty
-    private LocalDateTime feedbackDate;
+    private String feedbackDate;
     @JsonProperty
     private Integer rating;
 
@@ -22,7 +22,7 @@ public class AddFeedbackRequestDto {
         return feedback;
     }
 
-    public LocalDateTime getFeedbackDate() {
+    public String getFeedbackDate() {
         return feedbackDate;
     }
 
