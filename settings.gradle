@@ -1,0 +1,6 @@
+rootProject.name = 'pb-guestbook'
+
+include 'infrastructure:application'
+include 'infrastructure:rest-api'
+include 'domain'
+
