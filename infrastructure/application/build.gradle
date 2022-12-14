@@ -15,7 +15,6 @@ dependencies {
     implementation project(':domain');
     implementation project(':infrastructure:rest-api');
 
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation "org.springframework:spring-context-support"
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
