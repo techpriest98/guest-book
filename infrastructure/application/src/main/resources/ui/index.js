@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded',() => {
         };
 
         const authorBlock = document.createElement('div');
+        authorBlock.style.marginBottom = '16px';
         const authorNameLabel = document.createElement('div');
         authorNameLabel.textContent = 'Author name:';
         const authorNameInput = document.createElement('input');
@@ -115,6 +116,7 @@ document.addEventListener('DOMContentLoaded',() => {
         }
 
         const feedbackBlock = document.createElement('div');
+        feedbackBlock.style.marginBottom = '16px';
         const feedbackLabel = document.createElement('div');
         feedbackLabel.textContent = 'Feedback:';
         const feedbackArea = document.createElement('textarea');
@@ -124,6 +126,7 @@ document.addEventListener('DOMContentLoaded',() => {
         feedbackBlock.append(feedbackLabel, feedbackArea);
 
         const ratingBlock = document.createElement('div');
+        ratingBlock.style.marginBottom = '16px';
         const ratingLabel = document.createElement('div');
         ratingLabel.textContent = 'Rating:';
         const ratingInput = document.createElement('input');
