@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded',() => {
     header.append(addButton);
 
     const mainContent = document.createElement('div');
+    mainContent.style.padding = '16px';
 
     const loadFeedbacksPage = () => {
         const feedbackCardsList = document.createElement('div');
@@ -41,21 +42,35 @@ document.addEventListener('DOMContentLoaded',() => {
             const feedbacks = await response.json();
 
 
-            feedbacks.forEach(({authorName, feedback, feedbackDate, rating}) => {
+            feedbacks.forEach(({authorName, feedback, feedbackDate, rating}, i) => {
                 const feedbackCard = document.createElement('div');
+                feedbackCard.style.backgroundColor = '#f7f8fa';
+                feedbackCard.style.padding = '16px';
+                feedbackCard.style.border = '1px solid black';
+                if (i !== feedbacks.length - 1) {
+                    feedbackCard.style.marginBottom = '16px';
+                }
+
                 const feedbackHeader = document.createElement('div');
+                feedbackHeader.style.paddingBottom = '8px';
                 const ratingLabel = document.createElement('div');
                 ratingLabel.textContent = `Rating: ${rating}`;
                 feedbackHeader.append(ratingLabel);
 
                 const feedbackLabel = document.createElement('div');
                 feedbackLabel.textContent = feedback;
+                feedbackLabel.style.paddingBottom = '8px';
 
                 const feedbackFooter = document.createElement('div');
+                feedbackFooter.style.display = 'flex';
+                feedbackFooter.style.justifyContent = 'space-between';
                 const authorNameLabel = document.createElement('div');
                 authorNameLabel.textContent = authorName;
                 const feedbackDateLabel = document.createElement('div');
-                feedbackDateLabel.textContent = feedbackDate;
+                feedbackDateLabel.textContent = feedbackDate
+                    .split('.')[0]
+                    .split('T')
+                    .join(' ');
                 feedbackFooter.append(authorNameLabel, feedbackDateLabel);
 
                 feedbackCard.append(feedbackHeader, feedbackLabel, feedbackFooter)
