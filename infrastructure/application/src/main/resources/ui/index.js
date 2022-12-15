@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded',() => {
     header.append(headerTitle);
 
     const addButton = document.createElement('button');
-    addButton.textContent = 'Add new guest';
+    addButton.textContent = 'Add new feedback';
     addButton.onclick = () => {
         currentPage = PAGES.ADD_GUEST_FORM;
         buildMainContent();
