@@ -99,7 +99,10 @@ document.addEventListener('DOMContentLoaded',() => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(addGuestState)
-            })
+            });
+
+            currentPage = PAGES.DASHBOARD;
+            buildMainContent();
         };
 
         const authorBlock = document.createElement('div');
