@@ -13,17 +13,15 @@ import pb.guestbook.port.output.feedback.GetFeedbacksPort;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.TimeZone;
 
 @Repository
 public class FeedbackAdapter implements GetFeedbacksPort, AddFeedbackPort {
     private static final String GET_FEEDBACKS =
         "SELECT author_name, feedback, feedback_date, rating FROM feedbacks ORDER BY feedback_date DESC";
-    private static final String ADD_FEEDBACK = "INSERT INTO feedbacks "
-        + "(author_name, feedback, feedback_date, rating) VALUES (:authorName, :feedback, :feedbackDate, :rating)";
+    private static final String ADD_FEEDBACK =
+        "INSERT INTO feedbacks (author_name, feedback, feedback_date, rating) VALUES (:authorName, :feedback, :feedbackDate, :rating)";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -33,7 +31,7 @@ public class FeedbackAdapter implements GetFeedbacksPort, AddFeedbackPort {
 
     @Override
     public List<Feedback> getFeedbacks() {
-        return jdbcTemplate.query(GET_FEEDBACKS, new RowMapper<Feedback>(){
+        return jdbcTemplate.query(GET_FEEDBACKS, new RowMapper<Feedback>() {
             public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Feedback(
                     rs.getString(1),

@@ -13,7 +13,7 @@ public class FeedbackService implements AddFeedbackUseCase, GetFeedbacksUseCase 
     private final GetFeedbacksPort getFeedbacksPort;
     private final AddFeedbackPort addFeedbackPort;
 
-    public FeedbackService (GetFeedbacksPort getFeedbacksPort, AddFeedbackPort addFeedbackPort) {
+    public FeedbackService(GetFeedbacksPort getFeedbacksPort, AddFeedbackPort addFeedbackPort) {
         this.getFeedbacksPort = getFeedbacksPort;
         this.addFeedbackPort = addFeedbackPort;
     }

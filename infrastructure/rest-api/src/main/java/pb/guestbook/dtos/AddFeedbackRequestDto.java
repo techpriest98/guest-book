@@ -2,8 +2,6 @@ package pb.guestbook.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
-
 public class AddFeedbackRequestDto {
     @JsonProperty
     private String authorName;
