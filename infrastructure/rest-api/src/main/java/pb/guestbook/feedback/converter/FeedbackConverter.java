@@ -3,32 +3,23 @@ package pb.guestbook.feedback.converter;
 import pb.guestbook.dtos.AddFeedbackRequestDto;
 import pb.guestbook.dtos.AddFeedbackResponseDto;
 import pb.guestbook.dtos.FeedbackDto;
-import pb.guestbook.model.feedback.AddFeedbackRequest;
 import pb.guestbook.model.feedback.AddFeedbackResponse;
 import pb.guestbook.model.feedback.Feedback;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static java.util.Objects.isNull;
 
 public class FeedbackConverter {
-    public static AddFeedbackRequest toAddFeedbackRequest(AddFeedbackRequestDto addFeedbackRequestDto) {
-        AddFeedbackRequest.AddFeedBackRequestBuilder addFeedBackRequestBuilder = AddFeedbackRequest.newBuilder();
-        if (isNull(addFeedbackRequestDto)) {
-            return addFeedBackRequestBuilder.build();
-        }
+    public static Feedback toAddFeedbackRequest(AddFeedbackRequestDto addFeedbackRequestDto) {
+        Feedback feedback = new Feedback(
+            addFeedbackRequestDto.getAuthorName(),
+            addFeedbackRequestDto.getFeedback(),
+            LocalDateTime.parse(addFeedbackRequestDto.getFeedbackDate()),
+            addFeedbackRequestDto.getRating()
+        );
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        addFeedBackRequestBuilder
-            .setAuthorName(addFeedbackRequestDto.getAuthorName())
-            .setFeedback(addFeedbackRequestDto.getFeedback())
-            .setFeedbackDate(LocalDateTime.parse(addFeedbackRequestDto.getFeedbackDate()))
-            .setRating(addFeedbackRequestDto.getRating());
-
-        return addFeedBackRequestBuilder.build();
+        return feedback;
     }
 
     public static AddFeedbackResponseDto toAddFeedbackResponseDto(AddFeedbackResponse addFeedbackResponse) {

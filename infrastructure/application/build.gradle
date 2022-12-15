@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     implementation project(':domain');
+    implementation project(':infrastructure:database');
     implementation project(':infrastructure:rest-api');
 
     implementation "org.springframework:spring-context-support"

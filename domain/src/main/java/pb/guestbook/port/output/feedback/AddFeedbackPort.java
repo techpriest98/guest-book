@@ -1,8 +1,8 @@
-package pb.guestbook.port.input.feedback;
+package pb.guestbook.port.output.feedback;
 
 import pb.guestbook.model.feedback.AddFeedbackResponse;
 import pb.guestbook.model.feedback.Feedback;
 
-public interface AddFeedbackUseCase {
+public interface AddFeedbackPort {
     AddFeedbackResponse addFeedback (Feedback feedback);
 }
