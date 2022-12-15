@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded',() => {
         const submit = document.createElement('button');
         submit.textContent = "Add Guest";
         submit.onclick = async () => {
-            addGuestState.feedbackDate = new Date().toISOString().split('.')[0];
+            addGuestState.feedbackDate = new Date().toISOString();
             await fetch('http://localhost:8880/api/feedback/add', {
                 method: 'POST',
                 headers: {

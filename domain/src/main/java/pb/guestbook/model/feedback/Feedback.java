@@ -1,14 +1,15 @@
 package pb.guestbook.model.feedback;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class Feedback {
     private final String authorName;
     private final String feedback;
-    private final LocalDateTime feedbackDate;
+    private final ZonedDateTime feedbackDate;
     private final Integer rating;
 
-    public Feedback(String authorName, String feedback, LocalDateTime feedbackDate, Integer rating) {
+    public Feedback(String authorName, String feedback, ZonedDateTime feedbackDate, Integer rating) {
         this.authorName = authorName;
         this.feedback = feedback;
         this.feedbackDate = feedbackDate;
@@ -23,7 +24,7 @@ public class Feedback {
         return feedback;
     }
 
-    public LocalDateTime getFeedbackDate() {
+    public ZonedDateTime getFeedbackDate() {
         return feedbackDate;
     }
 

@@ -7,6 +7,7 @@ import pb.guestbook.model.feedback.AddFeedbackResponse;
 import pb.guestbook.model.feedback.Feedback;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 
@@ -15,7 +16,7 @@ public class FeedbackConverter {
         Feedback feedback = new Feedback(
             addFeedbackRequestDto.getAuthorName(),
             addFeedbackRequestDto.getFeedback(),
-            LocalDateTime.parse(addFeedbackRequestDto.getFeedbackDate()),
+            ZonedDateTime.parse(addFeedbackRequestDto.getFeedbackDate()),
             addFeedbackRequestDto.getRating()
         );
 

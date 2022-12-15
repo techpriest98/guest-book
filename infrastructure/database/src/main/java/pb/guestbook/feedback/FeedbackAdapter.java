@@ -12,12 +12,16 @@ import pb.guestbook.port.output.feedback.GetFeedbacksPort;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.TimeZone;
 
 @Repository
 public class FeedbackAdapter implements GetFeedbacksPort, AddFeedbackPort {
-    private static final String GET_FEEDBACKS = "SELECT * FROM feedbacks ORDER BY feedback_date DESC";
+    private static final String GET_FEEDBACKS =
+        "SELECT author_name, feedback, feedback_date, rating FROM feedbacks ORDER BY feedback_date DESC";
     private static final String ADD_FEEDBACK = "INSERT INTO feedbacks "
         + "(author_name, feedback, feedback_date, rating) VALUES (:authorName, :feedback, :feedbackDate, :rating)";
 
@@ -32,10 +36,10 @@ public class FeedbackAdapter implements GetFeedbacksPort, AddFeedbackPort {
         return jdbcTemplate.query(GET_FEEDBACKS, new RowMapper<Feedback>(){
             public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Feedback(
-                        rs.getString(1),
-                        rs.getString(2),
-                        LocalDateTime.parse(rs.getString(3)),
-                        rs.getInt(4)
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getTimestamp(3).toLocalDateTime().atZone(ZoneId.of("UTC")),
+                    rs.getInt(4)
                 );
             }
         });
@@ -46,7 +50,7 @@ public class FeedbackAdapter implements GetFeedbacksPort, AddFeedbackPort {
         MapSqlParameterSource map = new MapSqlParameterSource();
         map.addValue("authorName", feedback.getAuthorName());
         map.addValue("feedback", feedback.getFeedback());
-        map.addValue("feedbackDate", feedback.getFeedbackDate().toString());
+        map.addValue("feedbackDate", Timestamp.valueOf(feedback.getFeedbackDate().toLocalDateTime()));
         map.addValue("rating", feedback.getRating());
 
         jdbcTemplate.update(ADD_FEEDBACK, map);
