@@ -119,26 +119,25 @@ document.addEventListener('DOMContentLoaded',() => {
     const rootNode = document.querySelector('#root');
 
     const header = document.createElement('div');
-    header.style.display = 'flex';
-    header.style.justifyContent =  'space-between';
-    header.style.backgroundColor = '#334152';
-    header.style.padding = '16px';
+        header.style.display = 'flex';
+        header.style.justifyContent =  'space-between';
+        header.style.backgroundColor = '#334152';
+        header.style.padding = '16px';
 
-    const headerTitle = document.createElement('h2');
-    headerTitle.textContent = 'Guest Book';
-    headerTitle.style.color = '#ffffff';
-    headerTitle.style.margin = 0;
-    headerTitle.onclick = () => {
-        currentPage = PAGES.DASHBOARD;
-        buildMainContent();
-    }
-    header.append(headerTitle);
+        const headerTitle = document.createElement('h2');
+            headerTitle.textContent = 'Guest Book';
+            headerTitle.style.color = '#ffffff';
+            headerTitle.style.margin = 0;
+            headerTitle.onclick = () => {
+                currentPage = PAGES.DASHBOARD;
+                buildMainContent();
+            }
 
-    const addButton = getButton('Add New Feedback', () => {
-        currentPage = PAGES.ADD_GUEST_FORM;
-        buildMainContent();
-    });
-    header.append(addButton);
+        const addButton = getButton('Add New Feedback', () => {
+            currentPage = PAGES.ADD_GUEST_FORM;
+            buildMainContent();
+        });
+    header.append(headerTitle, addButton);
 
     const mainContent = document.createElement('div');
         mainContent.style.padding = '16px';
