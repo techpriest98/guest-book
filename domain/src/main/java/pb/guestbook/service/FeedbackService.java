@@ -1,30 +1,37 @@
 package pb.guestbook.service;
 
-import pb.guestbook.model.feedback.AddFeedbackResponse;
-import pb.guestbook.model.feedback.Feedback;
-import pb.guestbook.port.input.feedback.AddFeedbackUseCase;
-import pb.guestbook.port.input.feedback.GetFeedbacksUseCase;
-import pb.guestbook.port.output.feedback.AddFeedbackPort;
-import pb.guestbook.port.output.feedback.GetFeedbacksPort;
+import pb.guestbook.model.feedback.*;
+import pb.guestbook.port.input.feedback.FeedbacksUseCase;
+import pb.guestbook.port.output.feedback.FeedbackPort;
 
 import java.util.List;
 
-public class FeedbackService implements AddFeedbackUseCase, GetFeedbacksUseCase {
-    private final GetFeedbacksPort getFeedbacksPort;
-    private final AddFeedbackPort addFeedbackPort;
+public class FeedbackService implements FeedbacksUseCase {
+    private final FeedbackPort feedbackPort;
 
-    public FeedbackService(GetFeedbacksPort getFeedbacksPort, AddFeedbackPort addFeedbackPort) {
-        this.getFeedbacksPort = getFeedbacksPort;
-        this.addFeedbackPort = addFeedbackPort;
+    public FeedbackService(
+        FeedbackPort feedbackPort
+    ) {
+        this.feedbackPort = feedbackPort;
     }
 
     @Override
-    public AddFeedbackResponse addFeedback(Feedback feedback) {
-        return addFeedbackPort.addFeedback(feedback);
+    public AddFeedbackResponse addFeedback(AddFeedbackRequest addFeedbackRequest) {
+        return feedbackPort.addFeedback(addFeedbackRequest);
     }
 
     @Override
     public List<Feedback> getFeedbacks() {
-        return getFeedbacksPort.getFeedbacks();
+        return feedbackPort.getFeedbacks();
+    }
+
+    @Override
+    public UpdateFeedbackResponse updateFeedback(UpdateFeedbackRequest updateFeedbackRequest) {
+        return feedbackPort.updateFeedback(updateFeedbackRequest);
+    }
+
+    @Override
+    public RemoveFeedbackResponse removeFeedback(int feedbackId) {
+        return feedbackPort.removeFeedback(feedbackId);
     }
 }

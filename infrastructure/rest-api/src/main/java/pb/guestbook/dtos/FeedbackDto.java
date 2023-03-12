@@ -3,6 +3,9 @@ package pb.guestbook.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FeedbackDto {
+    @JsonProperty("id")
+    private Integer id;
+
     @JsonProperty("authorName")
     private String authorName;
     @JsonProperty("feedback")
@@ -12,7 +15,8 @@ public class FeedbackDto {
     @JsonProperty("rating")
     private Integer rating;
 
-    public FeedbackDto(String authorName, String feedback, String feedbackDate, Integer rating) {
+    public FeedbackDto(Integer id, String authorName, String feedback, String feedbackDate, Integer rating) {
+        this.id = id;
         this.authorName = authorName;
         this.feedback = feedback;
         this.feedbackDate = feedbackDate;

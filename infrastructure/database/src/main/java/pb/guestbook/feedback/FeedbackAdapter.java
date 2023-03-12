@@ -5,10 +5,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import pb.guestbook.model.feedback.AddFeedbackResponse;
-import pb.guestbook.model.feedback.Feedback;
-import pb.guestbook.port.output.feedback.AddFeedbackPort;
-import pb.guestbook.port.output.feedback.GetFeedbacksPort;
+import pb.guestbook.model.feedback.*;
+import pb.guestbook.port.output.feedback.FeedbackPort;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,12 +15,13 @@ import java.time.ZoneId;
 import java.util.List;
 
 @Repository
-public class FeedbackAdapter implements GetFeedbacksPort, AddFeedbackPort {
+public class FeedbackAdapter implements FeedbackPort {
     private static final String GET_FEEDBACKS =
-        "SELECT author_name, feedback, feedback_date, rating FROM feedbacks ORDER BY feedback_date DESC";
+        "SELECT id, author_name, feedback, feedback_date, rating FROM feedbacks ORDER BY feedback_date DESC";
     private static final String ADD_FEEDBACK =
         "INSERT INTO feedbacks (author_name, feedback, feedback_date, rating) VALUES (:authorName, :feedback, :feedbackDate, :rating)";
-
+    private static final String UPDATE_FEEDBACK = "UPDATE feedbacks SET feedback = (:feedback), rating = (:rating) WHERE id = (:id)";
+    private static final String REMOVE_FEEDBACK = "DELETE FROM feedbacks WHERE id = (:id)";
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public FeedbackAdapter(@Qualifier("guestbookPostgresDb") NamedParameterJdbcTemplate jdbcTemplate) {
@@ -34,25 +33,47 @@ public class FeedbackAdapter implements GetFeedbacksPort, AddFeedbackPort {
         return jdbcTemplate.query(GET_FEEDBACKS, new RowMapper<Feedback>() {
             public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Feedback(
-                    rs.getString(1),
+                    rs.getInt(1),
                     rs.getString(2),
-                    rs.getTimestamp(3).toLocalDateTime().atZone(ZoneId.of("UTC")),
-                    rs.getInt(4)
+                    rs.getString(3),
+                    rs.getTimestamp(4).toLocalDateTime().atZone(ZoneId.of("UTC")),
+                    rs.getInt(5)
                 );
             }
         });
     }
 
     @Override
-    public AddFeedbackResponse addFeedback(Feedback feedback) {
+    public AddFeedbackResponse addFeedback(AddFeedbackRequest addFeedbackRequest) {
         MapSqlParameterSource map = new MapSqlParameterSource();
-        map.addValue("authorName", feedback.getAuthorName());
-        map.addValue("feedback", feedback.getFeedback());
-        map.addValue("feedbackDate", Timestamp.valueOf(feedback.getFeedbackDate().toLocalDateTime()));
-        map.addValue("rating", feedback.getRating());
+        map.addValue("authorName", addFeedbackRequest.getAuthorName());
+        map.addValue("feedback", addFeedbackRequest.getFeedback());
+        map.addValue("feedbackDate", Timestamp.valueOf(addFeedbackRequest.getFeedbackDate().toLocalDateTime()));
+        map.addValue("rating", addFeedbackRequest.getRating());
 
-        jdbcTemplate.update(ADD_FEEDBACK, map);
+        int feedbackId = jdbcTemplate.update(ADD_FEEDBACK, map);
 
-        return new AddFeedbackResponse(200, "Feedback has been added");
+        return new AddFeedbackResponse(feedbackId);
+    }
+
+    public UpdateFeedbackResponse updateFeedback(UpdateFeedbackRequest updateFeedbackRequest) {
+        MapSqlParameterSource map = new MapSqlParameterSource();
+        map.addValue("id", updateFeedbackRequest.getId());
+        map.addValue("feedback", updateFeedbackRequest.getFeedback());
+        map.addValue("rating", updateFeedbackRequest.getRating());
+
+        int updatedRecords = jdbcTemplate.update(UPDATE_FEEDBACK, map);
+
+        return new UpdateFeedbackResponse(updatedRecords > 0);
+    }
+
+    @Override
+    public RemoveFeedbackResponse removeFeedback(int feedbackId) {
+        MapSqlParameterSource map = new MapSqlParameterSource();
+        map.addValue("id", feedbackId);
+
+        int deletedRecords = jdbcTemplate.update(REMOVE_FEEDBACK, map);
+
+        return new RemoveFeedbackResponse(deletedRecords > 0);
     }
 }

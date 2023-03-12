@@ -3,14 +3,10 @@ package pb.guestbook.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AddFeedbackResponseDto {
-    @JsonProperty("status")
-    private Integer status;
+    @JsonProperty("feedbackId")
+    private int feedbackId;
 
-    @JsonProperty("message")
-    private String message;
-
-    public AddFeedbackResponseDto(Integer status, String message) {
-        this.status = status;
-        this.message = message;
+    public AddFeedbackResponseDto(int feedbackId) {
+        this.feedbackId = feedbackId;
     }
 }
