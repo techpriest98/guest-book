@@ -1,5 +1,8 @@
 const render = (root, responseBody) => {
-    const elements = responseBody.map(({id, authorName, feedback, feedbackDate, rating}) => {
+    const elements = responseBody.map((props = {id, authorName, feedback, feedbackDate, rating}) => {
+        localStorage.setItem('data', JSON.stringify(props));
+        alert(localStorage.getItem('data'));
+
         const container = document.createElement('div');
         container.style.display = 'flex';
         container.style.width = '600px';
