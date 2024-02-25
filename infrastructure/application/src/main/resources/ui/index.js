@@ -170,9 +170,9 @@ const HeaderTitle = onClick => {
 /* FeedBack card */
 const RatingLabel = rating => {
     const label = document.createElement('div');
-    label.textContent = `Rating: ${Array(rating.rating).map(() => '*').join(' ')}`;
+    label.textContent = `Rating: ${Array.from({length: rating}, () => '*') .join(' ')}`;
 
-    return rating;
+    return label;
 }
 
 const FeedbackHeader = (rating, onEdit, onDelete) => {
