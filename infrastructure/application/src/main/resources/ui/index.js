@@ -12,19 +12,7 @@ const hidePortals = () => {
 }
 
 /* Components */
-const getFormItem = (labelText, children) => {
-    const component = document.createElement('div');
-    component.style.marginBottom = '16px';
-
-    const label = document.createElement('div');
-    label.textContent = labelText;
-
-    component.append(label, children);
-
-    return component;
-}
-
-const getTextArea = ({width, height, value, onChange}) => {
+const TextArea = ({width, height, value, onChange}) => {
     const textArea = document.createElement('textarea');
     textArea.value = value;
     textArea.style.width = `${width}px`;
@@ -38,7 +26,7 @@ const getTextArea = ({width, height, value, onChange}) => {
     return textArea;
 }
 
-const getInput = ({width, value, onChange}) => {
+const Input = ({width, value, onChange}) => {
     const input = document.createElement('input');
     input.value = value;
     input.style.width = `${width}px`;
@@ -49,7 +37,7 @@ const getInput = ({width, value, onChange}) => {
     return input;
 }
 
-const getNumberInput = ({value, onChange}) => {
+const NumberInput = ({value, onChange}) => {
     const input  = document.createElement('input');
     input.type = 'number';
     input.value = value;
@@ -62,24 +50,48 @@ const getNumberInput = ({value, onChange}) => {
     return input
 }
 
-const getOverlay = (children) => {
+const FormItem = (labelText, children) => {
+    const component = document.createElement('div');
+    component.className = 'form-item';
+
+    const label = document.createElement('div');
+    label.textContent = labelText;
+
+    component.append(label, ...children);
+
+    return component;
+}
+
+const Overlay = (children) => {
     const overlay = document.createElement('div');
-    overlay.style.position = 'absolute';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlay.className = 'overlay';
 
     overlay.append(children);
 
     return overlay;
 }
 
-const getButton = (caption, onClick) => {
+const RootNode = (children) => {
+    const rootNode = document.querySelector('#root');
+
+    rootNode.append(...children);
+    return rootNode;
+}
+
+const HorizontalGroup = (children, width) => {
+    const horizontalGroup = document.createElement('div');
+    horizontalGroup.className = 'horizontal-group';
+
+    if (width) {
+        horizontalGroup.style.width = `${width}px`;
+    }
+
+    horizontalGroup.append(...children)
+
+    return horizontalGroup;
+}
+
+const Button = (caption, onClick) => {
     const button = document.createElement('button');
         button.textContent = caption;
         button.onclick = onClick;
@@ -87,157 +99,169 @@ const getButton = (caption, onClick) => {
     return button;
 }
 
-const getErrorMessage = (message) => {
+const ErrorMessage = (message) => {
     const error = document.createElement('div');
-        error.style.display = 'flex';
-        error.style.padding = '16px';
-        error.style.justifyContent = 'space-between';
-        error.style.width = '600px';
-        error.style.height = '60px';
-        error.style.border = '2px solid #6b0a09';
-        error.style.backgroundColor = '#CD8A7FFF';
+    error.className = 'error-message';
 
-        const label = document.createElement('span');
-            label.style.color = '#6b0a09';
-            label.textContent = message;
+    const label = document.createElement('span');
+    label.className = 'error-message__label';
+    label.textContent = message;
 
-        const closeButton = document.createElement('button');
-            closeButton.textContent = 'x';
-            closeButton.style.height = '25px';
-            closeButton.style.backgroundColor = 'transparent';
-            closeButton.onclick = hidePortals;
+    const closeButton = document.createElement('button');
+    closeButton.className = 'error-message__close-button';
+    closeButton.textContent = 'x';
+    closeButton.onclick = hidePortals;
+
     error.append(label, closeButton);
 
-    return getOverlay(error);
+    return error;
 }
 
 
+/* Modal */
+const Modal = ({width, height, caption, onClose, body, footer}) => {
+    const modal = document.createElement('div');
+    modal.className = 'modal'
+    modal.style.width = `${width}px`;
+    modal.style.height = `${height}px`;
 
-document.addEventListener('DOMContentLoaded',() => {
-    let currentPage = PAGES.DASHBOARD;
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal__header';
 
-    const rootNode = document.querySelector('#root');
+    const modalCaption = document.createElement('strong');
+    modalCaption.textContent = caption;
 
+    const closeButton = Button('x', onClose);
+
+    modalHeader.append(modalCaption, closeButton);
+
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal__body';
+    modalBody.append(...body);
+
+    const modalFooter = document.createElement('div');
+    modalFooter.className = 'modal__footer';
+    modalFooter.append(footer);
+
+    modal.append(modalHeader, modalBody, modalFooter);
+
+    return modal;
+}
+
+/* Main Header */
+const Header = children => {
     const header = document.createElement('div');
-        header.style.display = 'flex';
-        header.style.justifyContent =  'space-between';
-        header.style.backgroundColor = '#334152';
-        header.style.padding = '16px';
+    header.className = 'header';
 
-        const headerTitle = document.createElement('h2');
-            headerTitle.textContent = 'Guest Book';
-            headerTitle.style.color = '#ffffff';
-            headerTitle.style.margin = 0;
-            headerTitle.onclick = () => {
-                currentPage = PAGES.DASHBOARD;
-                buildMainContent();
-            }
+    header.append(...children);
+    return header;
+};
 
-        const addButton = getButton('Add New Feedback', () => {
-            currentPage = PAGES.ADD_GUEST_FORM;
-            buildMainContent();
-        });
-    header.append(headerTitle, addButton);
+const HeaderTitle = onClick => {
+    const headerTitle = document.createElement('h2');
+    headerTitle.textContent = 'Guest Book';
+    headerTitle.className = 'header__title';
+    headerTitle.onclick = onClick;
 
-    const mainContent = document.createElement('div');
-        mainContent.style.padding = '16px';
+    return headerTitle;
+}
 
-    const loadFeedbacksPage = () => {
-        const feedbackCardsList = document.createElement('div');
-        const loadFeedbacks = async () => {
-            const response = await fetch('http://localhost:8880/api/feedbacks');
-            const feedbacks = await response.json();
 
-            feedbacks.forEach(({id, authorName, feedback, feedbackDate, rating}, i) => {
-                const feedbackCardState = {
-                    rating,
-                    feedback
-                }
+/* FeedBack card */
+const RatingLabel = rating => {
+    const label = document.createElement('div');
+    label.textContent = `Rating: ${Array(rating.rating).map(() => '*').join(' ')}`;
 
-                const feedbackCard = document.createElement('div');
-                    feedbackCard.style.backgroundColor = '#f7f8fa';
-                    feedbackCard.style.padding = '16px';
-                    feedbackCard.style.border = '1px solid black';
+    return rating;
+}
 
-                    if (i !== feedbacks.length - 1) {
-                        feedbackCard.style.marginBottom = '16px';
-                    }
+const FeedbackHeader = (rating, onEdit, onDelete) => {
+    const feedbackHeader = document.createElement('div');
+    feedbackHeader.className = 'feedback-card__child';
 
-                    const feedbackHeader = document.createElement('div');
-                        feedbackHeader.style.paddingBottom = '8px';
-                        feedbackHeader.style.display = 'flex';
-                        feedbackHeader.style.justifyContent = 'space-between';
+    feedbackHeader.append(
+        HorizontalGroup([
+            RatingLabel(rating),
+            HorizontalGroup([
+                Button('Edit', onEdit),
+                Button('Delete', onDelete)
+            ], 100)
+        ])
+    );
 
-                        const ratingLabel = document.createElement('div');
-                            ratingLabel.textContent = `Rating: ${feedbackCardState.rating}`;
+    return feedbackHeader;
+}
 
-                        const actionCorner = document.createElement('div');
-                            actionCorner.style.display = 'flex';
-                            actionCorner.style.justifyContent = 'space-between';
+const FeedbackLabel = (feedback) => {
+    const feedbackLabel = document.createElement('div');
+    feedbackLabel.textContent = feedback;
+    feedbackLabel.className = 'feedback-card__child';
 
-                            const editButton = getButton('Edit', () => {
-                                showEditFeedbackModal({id, feedback, rating});
-                            });
+    return feedbackLabel;
+}
 
-                            const deleteButton = getButton('Delete', async () => {
-                                await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
-                                    method: 'DELETE'
-                                });
-                                buildMainContent();
-                            });
-                        actionCorner.append(editButton, deleteButton);
-                    feedbackHeader.append(ratingLabel, actionCorner);
+const FeedbackFooter = (authorName, feedbackDate) => {
+    const authorNameLabel = document.createElement('div');
+        authorNameLabel.textContent = authorName;
 
-                    const feedbackLabel = document.createElement('div');
-                        feedbackLabel.textContent = feedback;
-                        feedbackLabel.style.paddingBottom = '8px';
+    const feedbackDateLabel = document.createElement('div');
+        feedbackDateLabel.textContent = feedbackDate.split('.')[0].split('T').join(' ');
 
-                    const feedbackFooter = document.createElement('div');
-                        feedbackFooter.style.display = 'flex';
-                        feedbackFooter.style.justifyContent = 'space-between';
+    return HorizontalGroup([
+        authorNameLabel,
+        feedbackDateLabel
+    ]);
+}
 
-                        const authorNameLabel = document.createElement('div');
-                            authorNameLabel.textContent = authorName;
+const FeedbackCard = ({feedback, authorName, feedbackDate, rating, onEdit, onDelete, notLastChild}) => {
+    const feedbackCard = document.createElement('div');
+    feedbackCard.className = notLastChild
+        ? 'feedback-card feedback-card_not-last'
+        : 'feedback-card';
 
-                        const feedbackDateLabel = document.createElement('div');
-                            feedbackDateLabel.textContent = feedbackDate.split('.')[0].split('T').join(' ');
-                    feedbackFooter.append(authorNameLabel, feedbackDateLabel);
-                feedbackCard.append(feedbackHeader, feedbackLabel, feedbackFooter)
+    feedbackCard.append(
+        FeedbackHeader(rating, onEdit, onDelete),
+        FeedbackLabel(feedback),
+        FeedbackFooter(authorName, feedbackDate)
+    )
 
-                feedbackCardsList.append(feedbackCard);
-            });
-        }
-        loadFeedbacks().then(() => mainContent.append(feedbackCardsList));
+    return feedbackCard;
+}
+
+/* Modules */
+const AddFeedbackPage = (onSuccessLoad) => {
+    const addFeedbackPage = document.createElement('div');
+    const addGuestState = {
+        authorName: '',
+        feedback: '',
+        feedbackDate: new Date().toISOString(),
+        rating: 1
     }
 
-    const loadAddFeedbackPage = () => {
-        const addGuestState = {
-            authorName: '',
-            feedback: '',
-            feedbackDate: new Date().toISOString(),
-            rating: 1
-        }
-
-        const authorBlock = getFormItem('Author name:', getInput({
-            width: 400,
-            value: addGuestState.authorName,
-            onChange: value => addGuestState.authorName = value
-        }));
-
-        const feedbackBlock = getFormItem('Feedback:', getTextArea({
-            width: 400,
-            height: 200,
-            value: addGuestState.feedback,
-            onChange: value => addGuestState.feedback = value
-        }));
-
-        const ratingBlock = getFormItem('Rating:', getNumberInput({
-            value: addGuestState.rating,
-            onChange: value => addGuestState.rating = value
-        }));
-
-        const submit = getButton('Publish feedback', async () => {
-            await fetch('http://localhost:8880/api/feedbacks', {
+    addFeedbackPage.append(
+        FormItem('Author name:', [
+            Input({
+                width: 400,
+                value: addGuestState.authorName,
+                onChange: value => addGuestState.authorName = value
+            })
+        ]),
+        FormItem('Feedback:', [
+            TextArea({
+                width: 400,
+                height: 200,
+                value: addGuestState.feedback,
+                onChange: value => addGuestState.feedback = value
+            })
+        ]),
+        FormItem('Rating:', [
+            NumberInput({
+                value: addGuestState.rating,
+                onChange: value => addGuestState.rating = value
+            })
+        ]),
+        Button('Publish feedback', async () => {
+            const response = await fetch('http://localhost:8880/api/feedbacks', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -246,112 +270,160 @@ document.addEventListener('DOMContentLoaded',() => {
                 body: JSON.stringify(addGuestState)
             });
 
-            currentPage = PAGES.DASHBOARD;
-            buildMainContent();
-        });
+            if (response.status === 200) {
+                onSuccessLoad();
+            } else {
+                const error = await response.json();
 
-        mainContent.append(authorBlock, feedbackBlock, ratingBlock, submit);
+                const portalHolder = document.querySelector('#portal-holder');
+                portalHolder.append(
+                    Overlay(ErrorMessage(error.error))
+                );
+            }
+        })
+    );
+
+    return addFeedbackPage;
+}
+
+const FeedbacksPage = (onLoad, onEdit, onRefresh) => {
+    const feedbackCardsList = document.createElement('div');
+    const loadFeedbacks = async () => {
+        const response = await fetch('http://localhost:8880/api/feedbacks');
+        const feedbacks = await response.json();
+
+        feedbacks.forEach(({id, authorName, feedback, feedbackDate, rating}, i) => {
+            feedbackCardsList.append(
+                FeedbackCard({
+                    feedback,
+                    authorName,
+                    feedbackDate,
+                    rating,
+                    onEdit: () => {
+                        onEdit({id, feedback, rating, onSuccess: onRefresh});
+                    },
+                    onDelete: async () => {
+                        const response = await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.status === 200) {
+                            onRefresh();
+                        } else {
+                            const error = await response.json();
+
+                            const portalHolder = document.querySelector('#portal-holder');
+                            portalHolder.append(
+                                Overlay(ErrorMessage(error.error))
+                            );
+                        }
+                    },
+                    notLastChild: i !== feedbacks.length - 1
+                })
+            );
+        });
     }
 
-    const buildMainContent = () => {
+    loadFeedbacks().then(() => onLoad(feedbackCardsList));
+}
+
+const EditFeedbackModal = ({id, feedback, rating, onSuccess}) => {
+    const feedbackState = {
+        feedback,
+        rating
+    }
+
+    const portalHolder = document.querySelector('#portal-holder');
+
+    portalHolder.append(
+        Overlay(
+            Modal({
+                width: 600,
+                height: 400,
+                caption: 'Edit Feedback',
+                onClose: hidePortals,
+                body: [
+                    FormItem('Feedback:', [
+                        TextArea({
+                            width: 578,
+                            height: 214,
+                            value: feedbackState.feedback,
+                            onChange: value => feedbackState.feedback = value
+                        })
+                    ]),
+                    FormItem('Rating:', [
+                        NumberInput({
+                            value: feedbackState.rating,
+                            onChange: value => feedbackState.rating = value
+                        })
+                    ])
+                ],
+                footer: HorizontalGroup([
+                    Button('Save', async () => {
+                        hidePortals();
+
+                        const response = await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(feedbackState)
+                        });
+
+                        if (response.status === 200) {
+                            onSuccess()
+                        } else {
+                            const error = await response.json();
+                            portalHolder.append(
+                                Overlay(ErrorMessage(error.error))
+                            );
+                        }
+                    }),
+                    Button('Cancel', hidePortals)
+                ], 120)
+            })
+        )
+    );
+}
+
+document.addEventListener('DOMContentLoaded',() => {
+    const mainContent = document.createElement('div');
+        mainContent.style.padding = '16px';
+
+    const buildMainContent = currentPage => {
         while (mainContent.firstChild) {
             mainContent.removeChild(mainContent.lastChild);
         }
 
         switch (currentPage) {
             case PAGES.DASHBOARD:
-                loadFeedbacksPage();
+                FeedbacksPage(
+                    list => mainContent.append(list),
+                    EditFeedbackModal,
+                    () => buildMainContent(PAGES.DASHBOARD)
+                );
                 break;
 
             case PAGES.ADD_GUEST_FORM:
-                loadAddFeedbackPage();
+                mainContent.append(
+                    AddFeedbackPage(() => buildMainContent(PAGES.DASHBOARD))
+                );
                 break;
         }
     };
 
-    const showEditFeedbackModal = ({id, feedback, rating}) => {
-        const feedbackState = {
-            feedback,
-            rating
-        }
+    RootNode([
+        Header([
+            HeaderTitle(() => {
+                buildMainContent(PAGES.DASHBOARD);
+            }),
+            Button('Add New Feedback', () => {
+                buildMainContent(PAGES.ADD_GUEST_FORM);
+            })
+        ]),
+        mainContent
+    ]);
 
-        const portalHolder = document.querySelector('#portal-holder');
-
-        const modal = document.createElement('div');
-            modal.style.display = 'flex';
-            modal.style.flexDirection = 'column';
-            modal.style.width = '600px';
-            modal.style.backgroundColor = 'white';
-            modal.style.height = '400px';
-
-            const modalHeader = document.createElement('div');
-                modalHeader.style.padding = '8px';
-                modalHeader.style.display = 'flex';
-                modalHeader.style.justifyContent = 'space-between';
-                modalHeader.style.alignItems = 'center';
-                modalHeader.style.borderBottom = '1px solid black';
-
-                const modalCaption = document.createElement('strong');
-                    modalCaption.textContent = 'Edit Feedback';
-
-                const closeButton = getButton('x', hidePortals);
-
-            modalHeader.append(modalCaption, closeButton);
-
-            const modalBody = document.createElement('div');
-                modalBody.style.display = 'flex';
-                modalBody.style.padding = '8px';
-                modalBody.style.flexDirection = 'column';
-                modalBody.style.borderBottom = '1px solid black';
-
-                const feedbackBlock = getFormItem('Feedback:', getTextArea({
-                    width: 578,
-                    height: 214,
-                    value: feedbackState.feedback,
-                    onChange: value => feedbackState.feedback = value
-                }));
-
-                const ratingBlock = getFormItem('Rating:', getNumberInput({
-                    value: feedbackState.rating,
-                    onChange: value => feedbackState.rating = value
-                }));
-
-            modalBody.append(feedbackBlock, ratingBlock);
-
-            const modalFooter = document.createElement('div');
-                modalFooter.style.padding = '8px';
-                modalFooter.style.display = 'flex';
-                modalFooter.style.alignItems = 'center';
-
-                const saveButton = getButton('Save', async () => {
-                    hidePortals();
-
-                    const response = await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(feedbackState)
-                    });
-
-                    if (response.status === 200) {
-                        buildMainContent();
-                    } else {
-                        const error = await response.json();
-                        portalHolder.append(getErrorMessage(error.error));
-                    }
-                });
-
-                const cancelButton = getButton('Cancel', hidePortals);
-            modalFooter.append(saveButton, cancelButton);
-        modal.append(modalHeader, modalBody, modalFooter);
-
-        portalHolder.append(getOverlay(modal));
-    }
-
-    loadFeedbacksPage();
-
-    rootNode.append(header);
-    rootNode.append(mainContent);
+    buildMainContent(PAGES.DASHBOARD);
 });
