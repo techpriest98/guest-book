@@ -213,11 +213,9 @@ const FeedbackFooter = (authorName, feedbackDate) => {
     ]);
 }
 
-const FeedbackCard = ({feedback, authorName, feedbackDate, rating, onEdit, onDelete, notLastChild}) => {
+const FeedbackCard = ({feedback, authorName, feedbackDate, rating, onEdit, onDelete}) => {
     const feedbackCard = document.createElement('div');
-    feedbackCard.className = notLastChild
-        ? 'feedback-card feedback-card_not-last'
-        : 'feedback-card';
+    feedbackCard.className = 'feedback-card';
 
     feedbackCard.append(
         FeedbackHeader(rating, onEdit, onDelete),

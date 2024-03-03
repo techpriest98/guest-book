@@ -41,7 +41,7 @@
     border: 1px solid black;
 }
 
-.feedback-card_not-last {
+.feedback-card:not(:last-child) {
     margin-bottom: 16px;
 }
 
