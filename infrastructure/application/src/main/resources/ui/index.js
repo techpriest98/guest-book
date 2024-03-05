@@ -247,7 +247,7 @@ const AddFeedbackPage = (onSuccess) => {
     return addFeedbackPage;
 }
 
-const FeedbacksPage = (onLoad) => {
+const FeedbacksPage = (onLoad, onRefresh) => {
     const feedbackCardsList = document.createElement('div');
     const loadFeedbacks = async () => {
         const response = await fetch('http://localhost:8880/api/feedbacks');
@@ -263,9 +263,22 @@ const FeedbacksPage = (onLoad) => {
                     onEdit: () => {
                         alert('Edit Feedback')
                     },
-                    onDelete: () => {
-                        alert('Delete Feedback')
-                    }
+                    onDelete: async () => {
+                        const response = await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.status === 200) {
+                            onRefresh();
+                        } else {
+                            const error = await response.json();
+
+                            const portalHolder = document.querySelector('#portal-holder');
+                            portalHolder.append(
+                                Overlay(ErrorMessage(error.error))
+                            );
+                        }
+                    },
                 })
             );
         });
@@ -286,7 +299,10 @@ const buildMainContent = (currentPage, mainContentContainer) => {
 
     switch (currentPage) {
         case PAGES.DASHBOARD:
-            FeedbacksPage(list => mainContentContainer.append(list));
+            FeedbacksPage(
+                list => mainContentContainer.append(list),
+                () => buildMainContent(PAGES.DASHBOARD, mainContentContainer)
+            );
             break;
 
         case PAGES.ADD_GUEST_FORM:
