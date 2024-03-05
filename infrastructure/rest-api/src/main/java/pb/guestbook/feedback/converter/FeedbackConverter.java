@@ -9,7 +9,7 @@ import pb.guestbook.model.feedback.AddFeedbackRequest;
 import pb.guestbook.model.feedback.Feedback;
 import pb.guestbook.model.feedback.UpdateFeedbackRequest;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FeedbackConverter {
@@ -17,7 +17,7 @@ public class FeedbackConverter {
         return new AddFeedbackRequest(
             addFeedbackRequestDto.getAuthorName(),
             addFeedbackRequestDto.getFeedback(),
-            ZonedDateTime.parse(addFeedbackRequestDto.getFeedbackDate()),
+            LocalDateTime.parse(addFeedbackRequestDto.getFeedbackDate()),
             addFeedbackRequestDto.getRating()
         );
     }

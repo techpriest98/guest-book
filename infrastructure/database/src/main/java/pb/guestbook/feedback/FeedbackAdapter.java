@@ -1,17 +1,12 @@
 package pb.guestbook.feedback;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import pb.guestbook.model.feedback.*;
 import pb.guestbook.port.output.feedback.FeedbackPort;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.ZoneId;
 import java.util.List;
 
 @Repository
@@ -30,17 +25,13 @@ public class FeedbackAdapter implements FeedbackPort {
 
     @Override
     public List<Feedback> getFeedbacks() {
-        return jdbcTemplate.query(GET_FEEDBACKS, new RowMapper<Feedback>() {
-            public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new Feedback(
-                    rs.getInt(1),
-                    rs.getString(2),
-                    rs.getString(3),
-                    rs.getTimestamp(4).toLocalDateTime().atZone(ZoneId.of("UTC")),
-                    rs.getInt(5)
-                );
-            }
-        });
+        return jdbcTemplate.query(GET_FEEDBACKS, (rs, rowNum) -> new Feedback(
+            rs.getInt(1),
+            rs.getString(2),
+            rs.getString(3),
+            rs.getTimestamp(4).toLocalDateTime(),
+            rs.getInt(5)
+        ));
     }
 
     @Override
@@ -48,7 +39,7 @@ public class FeedbackAdapter implements FeedbackPort {
         MapSqlParameterSource map = new MapSqlParameterSource();
         map.addValue("authorName", addFeedbackRequest.getAuthorName());
         map.addValue("feedback", addFeedbackRequest.getFeedback());
-        map.addValue("feedbackDate", Timestamp.valueOf(addFeedbackRequest.getFeedbackDate().toLocalDateTime()));
+        map.addValue("feedbackDate", addFeedbackRequest.getFeedbackDate());
         map.addValue("rating", addFeedbackRequest.getRating());
 
         int feedbackId = jdbcTemplate.update(ADD_FEEDBACK, map);
