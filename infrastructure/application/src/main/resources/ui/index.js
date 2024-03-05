@@ -255,7 +255,6 @@ const AddFeedbackPage = (onSuccess) => {
             const response = await fetch('http://localhost:8880/api/feedbacks', {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(addGuestState)
@@ -355,7 +354,6 @@ const EditFeedbackModal = ({id, feedback, rating, onSuccess}) => {
                         const response = await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
                             method: 'PUT',
                             headers: {
-                                'Accept': 'application/json',
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify(feedbackState)
