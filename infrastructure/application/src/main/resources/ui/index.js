@@ -111,6 +111,36 @@ const HorizontalGroup = (children, width) => {
     return horizontalGroup;
 }
 
+/* Modal */
+const Modal = ({width, height, caption, onClose, body, footer}) => {
+    const modal = document.createElement('div');
+    modal.className = 'modal'
+    modal.style.width = `${width}px`;
+    modal.style.height = `${height}px`;
+
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal__header';
+
+    const modalCaption = document.createElement('strong');
+    modalCaption.textContent = caption;
+
+    const closeButton = Button('x', onClose);
+
+    modalHeader.append(modalCaption, closeButton);
+
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal__body';
+    modalBody.append(...body);
+
+    const modalFooter = document.createElement('div');
+    modalFooter.className = 'modal__footer';
+    modalFooter.append(footer);
+
+    modal.append(modalHeader, modalBody, modalFooter);
+
+    return modal;
+}
+
 /* Modules */
 
 /* Main Header */
@@ -247,7 +277,7 @@ const AddFeedbackPage = (onSuccess) => {
     return addFeedbackPage;
 }
 
-const FeedbacksPage = (onLoad, onRefresh) => {
+const FeedbacksPage = (onLoad, onEdit, onRefresh) => {
     const feedbackCardsList = document.createElement('div');
     const loadFeedbacks = async () => {
         const response = await fetch('http://localhost:8880/api/feedbacks');
@@ -261,7 +291,7 @@ const FeedbacksPage = (onLoad, onRefresh) => {
                     feedbackDate,
                     rating,
                     onEdit: () => {
-                        alert('Edit Feedback')
+                        onEdit({id, feedback, rating, onSuccess: onRefresh});
                     },
                     onDelete: async () => {
                         const response = await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
@@ -287,6 +317,66 @@ const FeedbacksPage = (onLoad, onRefresh) => {
     loadFeedbacks().then(() => onLoad(feedbackCardsList));
 }
 
+const EditFeedbackModal = ({id, feedback, rating, onSuccess}) => {
+    const feedbackState = {
+        feedback,
+        rating
+    }
+
+    const portalHolder = document.querySelector('#portal-holder');
+
+    portalHolder.append(
+        Overlay(
+            Modal({
+                width: 600,
+                height: 400,
+                caption: 'Edit Feedback',
+                onClose: hidePortals,
+                body: [
+                    FormItem('Feedback:', [
+                        TextArea({
+                            width: 578,
+                            height: 214,
+                            value: feedbackState.feedback,
+                            onChange: value => feedbackState.feedback = value
+                        })
+                    ]),
+                    FormItem('Rating:', [
+                        NumberInput({
+                            value: feedbackState.rating,
+                            onChange: value => feedbackState.rating = value
+                        })
+                    ])
+                ],
+                footer: HorizontalGroup([
+                    Button('Save', async () => {
+                        hidePortals();
+
+                        const response = await fetch(`http://localhost:8880/api/feedbacks/${id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(feedbackState)
+                        });
+
+                        if (response.status === 200) {
+                            onSuccess()
+                        } else {
+                            const error = await response.json();
+                            portalHolder.append(
+                                Overlay(ErrorMessage(error.error))
+                            );
+                        }
+                    }),
+                    Button('Cancel', hidePortals)
+                ], 120)
+            })
+        )
+    );
+}
+
 const PAGES = {
     DASHBOARD: 'DASHBOARD',
     ADD_GUEST_FORM: 'ADD_GUEST_FORM'
@@ -301,6 +391,7 @@ const buildMainContent = (currentPage, mainContentContainer) => {
         case PAGES.DASHBOARD:
             FeedbacksPage(
                 list => mainContentContainer.append(list),
+                EditFeedbackModal,
                 () => buildMainContent(PAGES.DASHBOARD, mainContentContainer)
             );
             break;

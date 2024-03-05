@@ -44,6 +44,14 @@ public class FeedbackService implements FeedbacksUseCase {
 
     @Override
     public UpdateFeedbackResponse updateFeedback(UpdateFeedbackRequest updateFeedbackRequest) {
+        if (updateFeedbackRequest.getFeedback().isBlank()) {
+            throw new ValidationException("The feedback is required");
+        }
+
+        if (updateFeedbackRequest.getFeedback().length() > 256) {
+            throw new ValidationException("The feedback is too long");
+        }
+
         return feedbackPort.updateFeedback(updateFeedbackRequest);
     }
 

@@ -76,3 +76,31 @@
 .feedback-card__child {
     padding-bottom: 8px;
 }
+
+/* Modal */
+.modal {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.modal__header {
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid black;
+}
+
+.modal__body {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    border-bottom: 1px solid black;
+}
+
+.modal__footer {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
