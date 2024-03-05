@@ -50,6 +50,19 @@ const TextArea = ({width, height, value, onChange}) => {
     return textArea;
 }
 
+const NumberInput = ({value, onChange}) => {
+    const input  = document.createElement('input');
+    input.type = 'number';
+    input.value = value;
+    input.min = 1;
+    input.max = 5;
+    input.onchange = e => {
+        onChange(e.currentTarget.value);
+    }
+
+    return input
+}
+
 /* Modules */
 
 /* Main Header */
@@ -74,7 +87,9 @@ const AddFeedbackPage = (onSuccess) => {
     const addFeedbackPage = document.createElement('div');
     const addGuestState = {
         authorName: '',
-        feedback: ''
+        feedback: '',
+        rating: 1,
+        feedbackDate: new Date().toISOString()
     }
 
     addFeedbackPage.append(
@@ -93,10 +108,28 @@ const AddFeedbackPage = (onSuccess) => {
                 onChange: value => addGuestState.feedback = value
             })
         ]),
-        Button('Publish feedback', () => {
-            const {authorName, feedback} = addGuestState;
-            alert(`${authorName}, ${feedback}`);
-            onSuccess();
+        FormItem('Rating:', [
+            NumberInput({
+                value: addGuestState.rating,
+                onChange: value => addGuestState.rating = value
+            })
+        ]),
+        Button('Publish feedback', async () => {
+            const response = await fetch('http://localhost:8880/api/feedbacks', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(addGuestState)
+            });
+
+            if (response.status === 200) {
+                onSuccess();
+            } else {
+                const errorResponse = await response.json();
+                alert(errorResponse.error);
+            }
         })
     );
 
