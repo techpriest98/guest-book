@@ -42,6 +42,11 @@
     border: 2px solid #CD8A7FFF;
 }
 
+.horizontal-group {
+    display: flex;
+    justify-content: space-between;
+}
+
 /* Header */
 .header {
     display: flex;
@@ -54,4 +59,20 @@
     color: #ffffff;
     cursor: pointer;
     margin: 0;
+}
+
+
+/* Feedback Card */
+.feedback-card {
+    background-color: #f7f8fa;
+    padding: 16px;
+    border: 1px solid black;
+}
+
+.feedback-card:not(:last-child) {
+    margin-bottom: 16px;
+}
+
+.feedback-card__child {
+    padding-bottom: 8px;
 }

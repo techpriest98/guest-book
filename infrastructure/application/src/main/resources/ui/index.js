@@ -98,6 +98,19 @@ const ErrorMessage = (message) => {
     return error;
 }
 
+const HorizontalGroup = (children, width) => {
+    const horizontalGroup = document.createElement('div');
+    horizontalGroup.className = 'horizontal-group';
+
+    if (width) {
+        horizontalGroup.style.width = `${width}px`;
+    }
+
+    horizontalGroup.append(...children)
+
+    return horizontalGroup;
+}
+
 /* Modules */
 
 /* Main Header */
@@ -116,6 +129,42 @@ const HeaderTitle = onClick => {
     headerTitle.onclick = onClick;
 
     return headerTitle;
+}
+
+/* Feedback card */
+const RatingLabel = rating => {
+    const label = document.createElement('div');
+    label.textContent = `Rating: ${Array.from({length: rating}, () => '*') .join(' ')}`;
+
+    return label;
+}
+
+const FeedbackHeader = (rating, onEdit, onDelete) => {
+    const feedbackHeader = document.createElement('div');
+    feedbackHeader.className = 'feedback-card__child';
+
+    feedbackHeader.append(
+        HorizontalGroup([
+            RatingLabel(rating),
+            HorizontalGroup([
+                Button('Edit', onEdit),
+                Button('Delete', onDelete)
+            ], 100)
+        ])
+    );
+
+    return feedbackHeader;
+}
+
+const FeedbackCard = ({rating, onEdit, onDelete}) => {
+    const feedbackCard = document.createElement('div');
+    feedbackCard.className = 'feedback-card';
+
+    feedbackCard.append(
+        FeedbackHeader(rating, onEdit, onDelete),
+    )
+
+    return feedbackCard;
 }
 
 const AddFeedbackPage = (onSuccess) => {
@@ -175,6 +224,33 @@ const AddFeedbackPage = (onSuccess) => {
     return addFeedbackPage;
 }
 
+const FeedbacksPage = (onLoad) => {
+    const feedbackCardsList = document.createElement('div');
+    const loadFeedbacks = async () => {
+        const response = await fetch('http://localhost:8880/api/feedbacks');
+        const feedbacks = await response.json();
+
+        feedbacks.forEach(({id, authorName, feedback, feedbackDate, rating}, i) => {
+            feedbackCardsList.append(
+                FeedbackCard({
+                    feedback,
+                    authorName,
+                    feedbackDate,
+                    rating,
+                    onEdit: () => {
+                        alert('Edit Feedback')
+                    },
+                    onDelete: () => {
+                        alert('Delete Feedback')
+                    }
+                })
+            );
+        });
+    }
+
+    loadFeedbacks().then(() => onLoad(feedbackCardsList));
+}
+
 const PAGES = {
     DASHBOARD: 'DASHBOARD',
     ADD_GUEST_FORM: 'ADD_GUEST_FORM'
@@ -187,7 +263,7 @@ const buildMainContent = (currentPage, mainContentContainer) => {
 
     switch (currentPage) {
         case PAGES.DASHBOARD:
-            mainContentContainer.append("Feedbacks dashboard");
+            FeedbacksPage(list => mainContentContainer.append(list));
             break;
 
         case PAGES.ADD_GUEST_FORM:
