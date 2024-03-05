@@ -156,12 +156,36 @@ const FeedbackHeader = (rating, onEdit, onDelete) => {
     return feedbackHeader;
 }
 
-const FeedbackCard = ({rating, onEdit, onDelete}) => {
+const FeedbackLabel = (feedback) => {
+    const feedbackLabel = document.createElement('div');
+    feedbackLabel.textContent = feedback;
+    feedbackLabel.className = 'feedback-card__child';
+
+    return feedbackLabel;
+}
+
+const FeedbackFooter = (authorName, feedbackDate) => {
+    const authorNameLabel = document.createElement('div');
+    authorNameLabel.textContent = authorName;
+
+    const feedbackDateLabel = document.createElement('div');
+    feedbackDateLabel.textContent = new Date(feedbackDate)
+        .toLocaleString('en-US', {timeZone: 'UTC'});
+
+    return HorizontalGroup([
+        authorNameLabel,
+        feedbackDateLabel
+    ]);
+}
+
+const FeedbackCard = ({rating, feedback, authorName, feedbackDate, onEdit, onDelete}) => {
     const feedbackCard = document.createElement('div');
     feedbackCard.className = 'feedback-card';
 
     feedbackCard.append(
         FeedbackHeader(rating, onEdit, onDelete),
+        FeedbackLabel(feedback),
+        FeedbackFooter(authorName, feedbackDate)
     )
 
     return feedbackCard;
@@ -172,8 +196,7 @@ const AddFeedbackPage = (onSuccess) => {
     const addGuestState = {
         authorName: '',
         feedback: '',
-        rating: 1,
-        feedbackDate: new Date().toISOString()
+        rating: 1
     }
 
     addFeedbackPage.append(
@@ -230,7 +253,7 @@ const FeedbacksPage = (onLoad) => {
         const response = await fetch('http://localhost:8880/api/feedbacks');
         const feedbacks = await response.json();
 
-        feedbacks.forEach(({id, authorName, feedback, feedbackDate, rating}, i) => {
+        feedbacks.forEach(({id, authorName, feedback, feedbackDate, rating}) => {
             feedbackCardsList.append(
                 FeedbackCard({
                     feedback,
