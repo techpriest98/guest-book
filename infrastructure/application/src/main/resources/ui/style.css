@@ -54,19 +54,22 @@
     display: flex;
     padding: 16px;
     justify-content: space-between;
-    width: 600px;
-    height: 60px;
+    align-items: center;
     border: 2px solid #6b0a09;
-    background-color: #CD8A7FFF;
+    background-color: #6b0a09;
 }
 
 .error-message__label {
-    color: #6b0a09;
+    color: #CD8A7FFF;
+    font-weight: bold;
 }
 
 .error-message__close-button {
     height: 25px;
+    margin-left: 10px;
     background-color: transparent;
+    color: #CD8A7FFF;
+    border: 2px solid #CD8A7FFF;
 }
 
 /* Modal */
