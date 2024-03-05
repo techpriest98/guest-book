@@ -17,7 +17,6 @@ public class FeedbackConverter {
         return new AddFeedbackRequest(
             addFeedbackRequestDto.getAuthorName(),
             addFeedbackRequestDto.getFeedback(),
-            LocalDateTime.parse(addFeedbackRequestDto.getFeedbackDate()),
             addFeedbackRequestDto.getRating()
         );
     }

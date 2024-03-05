@@ -18,6 +18,14 @@ public class FeedbackService implements FeedbacksUseCase {
 
     @Override
     public AddFeedbackResponse addFeedback(AddFeedbackRequest addFeedbackRequest) {
+        if (addFeedbackRequest.getFeedback().isBlank()) {
+            throw new ValidationException("The feedback is required");
+        }
+
+        if (addFeedbackRequest.getAuthorName().isBlank()) {
+            throw new ValidationException("The author name is required");
+        }
+
         if (addFeedbackRequest.getAuthorName().length() > 128) {
             throw new ValidationException("The author name is too long");
         }

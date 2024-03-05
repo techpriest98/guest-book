@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import pb.guestbook.model.feedback.*;
 import pb.guestbook.port.output.feedback.FeedbackPort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -39,8 +40,8 @@ public class FeedbackAdapter implements FeedbackPort {
         MapSqlParameterSource map = new MapSqlParameterSource();
         map.addValue("authorName", addFeedbackRequest.getAuthorName());
         map.addValue("feedback", addFeedbackRequest.getFeedback());
-        map.addValue("feedbackDate", addFeedbackRequest.getFeedbackDate());
         map.addValue("rating", addFeedbackRequest.getRating());
+        map.addValue("feedbackDate", LocalDateTime.now());
 
         int feedbackId = jdbcTemplate.update(ADD_FEEDBACK, map);
 
