@@ -31,6 +31,27 @@ const HeaderTitle = onClick => {
     return headerTitle;
 }
 
+const PAGES = {
+    DASHBOARD: 'DASHBOARD',
+    ADD_GUEST_FORM: 'ADD_GUEST_FORM'
+}
+
+const buildMainContent = (currentPage, mainContentContainer) => {
+    while (mainContentContainer.firstChild) {
+        mainContentContainer.removeChild(mainContentContainer.lastChild);
+    }
+
+    switch (currentPage) {
+        case PAGES.DASHBOARD:
+            mainContentContainer.append("Feedbacks dashboard");
+            break;
+
+        case PAGES.ADD_GUEST_FORM:
+            mainContentContainer.append("Add feedback form");
+            break;
+    }
+};
+
 document.addEventListener('DOMContentLoaded',() => {
     const mainContent = document.createElement('div');
     mainContent.className = 'main-content';
@@ -38,12 +59,15 @@ document.addEventListener('DOMContentLoaded',() => {
     RootNode([
         Header([
             HeaderTitle(() => {
-                alert('Redirect to feedback list');
+                buildMainContent(PAGES.DASHBOARD, mainContent);
+
             }),
             Button('Add New Feedback', () => {
-                alert('Redirect to add feedback form');
+                buildMainContent(PAGES.ADD_GUEST_FORM, mainContent);
             })
         ]),
         mainContent
     ]);
+
+    buildMainContent(PAGES.DASHBOARD, mainContent);
 });
