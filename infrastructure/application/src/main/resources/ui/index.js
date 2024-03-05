@@ -13,6 +13,31 @@ const Button = (caption, onClick) => {
     return button;
 }
 
+const FormItem = (labelText, children) => {
+    const component = document.createElement('div');
+    component.className = 'form-item';
+
+    const label = document.createElement('div');
+    label.textContent = labelText;
+
+    component.append(label, ...children);
+
+    return component;
+}
+
+const Input = ({width, value, onChange}) => {
+    const input = document.createElement('input');
+    input.value = value;
+    input.style.width = `${width}px`;
+    input.onchange = e => {
+        onChange(e.currentTarget.value);
+    }
+
+    return input;
+}
+
+/* Modules */
+
 /* Main Header */
 const Header = children => {
     const header = document.createElement('div');
@@ -31,6 +56,30 @@ const HeaderTitle = onClick => {
     return headerTitle;
 }
 
+const AddFeedbackPage = (onSuccessLoad) => {
+    const addFeedbackPage = document.createElement('div');
+    const addGuestState = {
+        authorName: ''
+    }
+
+    addFeedbackPage.append(
+        FormItem('Author name:', [
+            Input({
+                width: 400,
+                value: addGuestState.authorName,
+                onChange: value => addGuestState.authorName = value
+            })
+        ]),
+        Button('Publish feedback', () => {
+            const {authorName} = addGuestState;
+            alert(`${authorName}`);
+            onSuccessLoad();
+        })
+    );
+
+    return addFeedbackPage;
+}
+
 const PAGES = {
     DASHBOARD: 'DASHBOARD',
     ADD_GUEST_FORM: 'ADD_GUEST_FORM'
@@ -47,7 +96,12 @@ const buildMainContent = (currentPage, mainContentContainer) => {
             break;
 
         case PAGES.ADD_GUEST_FORM:
-            mainContentContainer.append("Add feedback form");
+            mainContentContainer.append(
+                AddFeedbackPage(() => buildMainContent(
+                    PAGES.DASHBOARD,
+                    mainContentContainer
+                ))
+            );
             break;
     }
 };
@@ -60,7 +114,6 @@ document.addEventListener('DOMContentLoaded',() => {
         Header([
             HeaderTitle(() => {
                 buildMainContent(PAGES.DASHBOARD, mainContent);
-
             }),
             Button('Add New Feedback', () => {
                 buildMainContent(PAGES.ADD_GUEST_FORM, mainContent);

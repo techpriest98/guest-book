@@ -2,6 +2,10 @@
     padding: 16px;
 }
 
+.form-item {
+    margin-bottom: 16px;
+}
+
 /* Header */
 .header {
     display: flex;
