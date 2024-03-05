@@ -36,6 +36,20 @@ const Input = ({width, value, onChange}) => {
     return input;
 }
 
+const TextArea = ({width, height, value, onChange}) => {
+    const textArea = document.createElement('textarea');
+    textArea.value = value;
+    textArea.style.width = `${width}px`;
+    textArea.style.maxWidth = `${width}px`;
+    textArea.style.height = `${height}px`;
+    textArea.style.maxHeight =`${height}px`;
+    textArea.onchange = e => {
+        onChange(e.currentTarget.value);
+    }
+
+    return textArea;
+}
+
 /* Modules */
 
 /* Main Header */
@@ -56,10 +70,11 @@ const HeaderTitle = onClick => {
     return headerTitle;
 }
 
-const AddFeedbackPage = (onSuccessLoad) => {
+const AddFeedbackPage = (onSuccess) => {
     const addFeedbackPage = document.createElement('div');
     const addGuestState = {
-        authorName: ''
+        authorName: '',
+        feedback: ''
     }
 
     addFeedbackPage.append(
@@ -70,10 +85,18 @@ const AddFeedbackPage = (onSuccessLoad) => {
                 onChange: value => addGuestState.authorName = value
             })
         ]),
+        FormItem('Feedback:', [
+            TextArea({
+                width: 400,
+                height: 200,
+                value: addGuestState.feedback,
+                onChange: value => addGuestState.feedback = value
+            })
+        ]),
         Button('Publish feedback', () => {
-            const {authorName} = addGuestState;
-            alert(`${authorName}`);
-            onSuccessLoad();
+            const {authorName, feedback} = addGuestState;
+            alert(`${authorName}, ${feedback}`);
+            onSuccess();
         })
     );
 
