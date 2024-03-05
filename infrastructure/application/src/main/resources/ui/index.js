@@ -1,3 +1,11 @@
+const hidePortals = () => {
+    const portalHolder = document.querySelector('#portal-holder');
+
+    while (portalHolder.firstChild) {
+        portalHolder.removeChild(portalHolder.lastChild);
+    }
+}
+
 const RootNode = (children) => {
     const rootNode = document.querySelector('#root');
 
@@ -61,6 +69,33 @@ const NumberInput = ({value, onChange}) => {
     }
 
     return input
+}
+
+const Overlay = (children) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+
+    overlay.append(children);
+
+    return overlay;
+}
+
+const ErrorMessage = (message) => {
+    const error = document.createElement('div');
+    error.className = 'error-message';
+
+    const label = document.createElement('span');
+    label.className = 'error-message__label';
+    label.textContent = message;
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'error-message__close-button';
+    closeButton.textContent = 'x';
+    closeButton.onclick = hidePortals;
+
+    error.append(label, closeButton);
+
+    return error;
 }
 
 /* Modules */
@@ -128,7 +163,11 @@ const AddFeedbackPage = (onSuccess) => {
                 onSuccess();
             } else {
                 const errorResponse = await response.json();
-                alert(errorResponse.error);
+
+                const portalHolder = document.querySelector('#portal-holder');
+                portalHolder.append(
+                    Overlay(ErrorMessage(errorResponse.error))
+                );
             }
         })
     );
